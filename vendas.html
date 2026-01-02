@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pratas Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.paypal.com/sdk/js?client-id=Af2JphH-9dx1TEPujfpjDFUSQzIEqOSgm1uAJ7tldWqcX0hSWANU4g2BbT2HTPJN5_Y4t-Q7Czu3fKsl&currency=EUR"></script>
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("UbyCkZCcWdvvB7Mb2"); 
+        })();
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f0f0f; color: #fff; overflow-x: hidden; }
+        header { background: #1a1a1a; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff0844; position: sticky; top: 0; z-index: 1000; }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: bold; color: #ff0844; text-decoration: none; cursor: pointer; }
+        .logo img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; }
+        .cart-btn { background: #ff0844; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        
+        .container { max-width: 1100px; margin: 50px auto; padding: 20px; text-align: center; }
+        
+        /* Menu de Categorias */
+        .menu-categorias { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 40px; }
+        .card-categoria { position: relative; height: 220px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: 0.4s; border: 2px solid #333; }
+        .card-categoria img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: 0.4s; }
+        .card-categoria:hover img { transform: scale(1.1); opacity: 0.8; }
+        .card-categoria:hover { border-color: #ff0844; box-shadow: 0 0 20px rgba(255, 8, 68, 0.3); }
+        .card-categoria h2 { position: absolute; bottom: 20px; left: 20px; font-size: 26px; text-shadow: 2px 2px 10px rgba(0,0,0,0.9); z-index: 2; font-weight: 800; }
+
+        /* Lista de Itens com Fotos */
+        #areaItens { display: none; }
+        .btn-voltar { background: transparent; color: #ff0844; border: 1px solid #ff0844; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-bottom: 30px; transition: 0.3s; }
+        .btn-voltar:hover { background: #ff0844; color: white; }
+        
+        .lista-subitens { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .item-clicavel { background: #1a1a1a; border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid #333; transition: 0.3s; text-align: left; }
+        .item-clicavel:hover { border-color: #ff0844; transform: translateY(-5px); }
+        .item-img { width: 100%; height: 150px; object-fit: cover; border-bottom: 2px solid #ff0844; }
+        .item-info { padding: 15px; }
+        .item-info h3 { font-size: 18px; margin-bottom: 5px; }
+        .item-info span { color: #ff0844; font-weight: bold; font-size: 14px; }
+
+        /* Carrinho Sidebar */
+        .sidebar-cart { position: fixed; right: -100%; top: 0; width: 350px; height: 100vh; background: #1a1a1a; border-left: 2px solid #ff0844; z-index: 2000; transition: 0.4s; padding: 30px; display: flex; flex-direction: column; }
+        .sidebar-cart.active { right: 0; }
+        .cart-items-list { flex-grow: 1; overflow-y: auto; margin: 20px 0; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #333; }
+        
+        /* Discord Input */
+        .discord-input-area { background: #252525; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; border: 1px solid #333; }
+        .discord-input-area label { display: block; font-size: 11px; color: #ff0844; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
+        .discord-input-area input { width: 100%; background: #111; border: 1px solid #444; color: white; padding: 10px; border-radius: 5px; outline: none; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: #1a1a1a; padding: 40px; border-radius: 15px; max-width: 500px; width: 90%; text-align: center; border: 1px solid #ff0844; position: relative; }
+        .close-modal { position: absolute; right: 20px; top: 10px; font-size: 30px; cursor: pointer; }
+        .btn-add-cart { background: #ff0844; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 20px; }
+        
+        .animar { animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div onclick="voltarAoMenu()" class="logo">
+            <img src="favicon.jpg" alt="Logo">
+            <span>Pratas Shop</span>
+        </div>
+        <button class="cart-btn" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i>
+            Cart (<span id="cart-count">0</span>)
+        </button>
+    </header>
+
+    <div id="sidebarCart" class="sidebar-cart">
+        <div style="display:flex; justify-content: space-between; align-items: center;">
+            <h2>Checkout</h2>
+            <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer; font-size: 24px;"></i>
+        </div>
+        <div class="cart-items-list" id="cart-items"></div>
+        <div class="discord-input-area" id="discordArea" style="display:none;">
+            <label>Delivery Discord ID (@username)</label>
+            <input type="text" id="discordUser" placeholder="e.g. pratas#1234" oninput="validarCheckout()">
+        </div>
+        <div style="border-top: 2px solid #333; padding-top: 20px;">
+            <div style="display:flex; justify-content: space-between; font-size: 1.5em; margin-bottom: 20px;">
+                <span>Total:</span>
+                <span id="cart-total">€0.00</span>
+            </div>
+            <div id="paypal-button-container"></div>
+            <p id="msgAviso" style="color: #666; font-size: 12px; text-align: center;">Enter Discord to pay.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="menuPrincipal" class="animar">
+            <h1>WELCOME TO <span style="color:#ff0844">PRATAS SHOP</span></h1>
+            <p style="color: #888;">Select a category to see our products</p>
+            <div class="menu-categorias">
+                <div class="card-categoria" onclick="abrirCategoria('streaming')">
+                    <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=600" alt="Streaming">
+                    <h2>STREAMING</h2>
+                </div>
+                <div class="card-categoria" onclick="abrirCategoria('games')">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600" alt="Games">
+                    <h2>GAMES</h2>
+                </div>
+                <div class="card-categoria" onclick="abrirCategoria('social')">
+                    <img src="https://images.unsplash.com/photo-1614102073832-030967418971?auto=format&fit=crop&w=600" alt="Social">
+                    <h2>SOCIAL</h2>
+                </div>
+            </div>
+        </div>
+
+        <div id="areaItens" class="animar">
+            <button class="btn-voltar" onclick="voltarAoMenu()"><i class="fas fa-arrow-left"></i> Back to Menu</button>
+            <h2 id="tituloCategoria" style="color:#ff0844; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px;"></h2>
+            <div id="listaItens" class="lista-subitens"></div>
+        </div>
+    </div>
+
+    <div id="modalDetalhe" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="fecharModal()">&times;</span>
+            <div id="modalIcone" style="margin-bottom: 15px;"></div>
+            <h2 id="modalNome"></h2>
+            <p id="modalDesc" style="color: #aaa; margin: 15px 0;"></p>
+            <h1 id="modalPreco" style="color: #fff; margin-bottom: 10px;"></h1>
+            <button class="btn-add-cart" onclick="adicionarAoCarrinho()">ADD TO CART</button>
+        </div>
+    </div>
+
+    <script>
+        // LISTA DE PRODUTOS COM IMAGENS REAIS
+        const produtos = [
+            { id: 1, nome: 'UFC Lifetime FA Account', categoria: 'streaming', preco: 2.60, img: 'https://images.unsplash.com/photo-1512070670213-941bf9c39c59?auto=format&fit=crop&w=400', desc: '' },
+            { id: 2, nome: 'Netflix LifeTime', categoria: 'streaming', preco: 3.00, img: 'https://images.unsplash.com/photo-1512070670213-941bf9c39c59?auto=format&fit=crop&w=400', desc: "" },
+            { id: 3, nome: 'Discord Nitro (1 Month)', categoria: 'social', preco: 4.99, img: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=400', desc: '' },
+            { id: 4, nome: 'FIFA 24 Coins', categoria: 'games', preco: 12.99, img: 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?auto=format&fit=crop&w=400', desc: 'Safe transfer method. Fast delivery.' },
+            { id: 5, nome: 'Valorant 1000 VP', categoria: 'games', preco: 9.99, img: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=400', desc: 'Instant delivery via Riot ID.' },
+            { id: 6, nome: 'Spotify Premium Lifetime FA Account', categoria: 'streaming', preco: 3.99, img: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=400', desc: 'Listen offline without ads.' },
+            { id: 7, nome: 'Instagram Followers', categoria: 'social', preco: 5.00, img: 'https://images.unsplash.com/photo-1611262588024-d12430b98920?auto=format&fit=crop&w=400', desc: 'High quality followers. No drop.' }
+        ];
+
+        let carrinho = [];
+        let produtoParaAdicionar = null;
+
+        function abrirCategoria(cat) {
+            document.getElementById('menuPrincipal').style.display = 'none';
+            document.getElementById('areaItens').style.display = 'block';
+            document.getElementById('tituloCategoria').innerText = cat;
+            
+            const filtrados = produtos.filter(p => p.categoria === cat);
+            const lista = document.getElementById('listaItens');
+            
+            lista.innerHTML = filtrados.map(p => `
+                <div class="item-clicavel" onclick="abrirDetalhe(${p.id})">
+                    <img src="${p.img}" class="item-img">
+                    <div class="item-info">
+                        <h3>${p.nome}</h3>
+                        <span>€${p.preco.toFixed(2)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function voltarAoMenu() {
+            document.getElementById('menuPrincipal').style.display = 'block';
+            document.getElementById('areaItens').style.display = 'none';
+        }
+
+        function abrirDetalhe(id) {
+            const p = produtos.find(item => item.id === id);
+            produtoParaAdicionar = p;
+            document.getElementById('modalNome').innerText = p.nome;
+            document.getElementById('modalDesc').innerText = p.desc;
+            document.getElementById('modalPreco').innerText = `€${p.preco.toFixed(2)}`;
+            document.getElementById('modalIcone').innerHTML = `<img src="${p.img}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">`;
+            document.getElementById('modalDetalhe').style.display = 'flex';
+        }
+
+        function fecharModal() { document.getElementById('modalDetalhe').style.display = 'none'; }
+
+        function adicionarAoCarrinho() {
+            carrinho.push(produtoParaAdicionar);
+            atualizarCarrinhoUI();
+            fecharModal();
+            toggleCart();
+        }
+
+        function removerDoCarrinho(index) {
+            carrinho.splice(index, 1);
+            atualizarCarrinhoUI();
+        }
+
+        function toggleCart() { document.getElementById('sidebarCart').classList.toggle('active'); }
+
+        function validarCheckout() {
+            const discord = document.getElementById('discordUser').value.trim();
+            const btnPaypal = document.getElementById('paypal-button-container');
+            const aviso = document.getElementById('msgAviso');
+            if (discord.length > 2) {
+                btnPaypal.style.pointerEvents = 'auto'; btnPaypal.style.opacity = '1'; aviso.style.display = 'none';
+            } else {
+                btnPaypal.style.pointerEvents = 'none'; btnPaypal.style.opacity = '0.3'; aviso.style.display = 'block';
+            }
+        }
+
+        function atualizarCarrinhoUI() {
+            document.getElementById('cart-count').innerText = carrinho.length;
+            const lista = document.getElementById('cart-items');
+            const discordArea = document.getElementById('discordArea');
+            let total = 0;
+            
+            lista.innerHTML = carrinho.map((item, index) => {
+                total += item.preco;
+                return `<div class="cart-item"><span>${item.nome}</span><span>€${item.preco.toFixed(2)} <i class="fas fa-trash" style="color:#ff0844; cursor:pointer;" onclick="removerDoCarrinho(${index})"></i></span></div>`;
+            }).join('');
+            
+            document.getElementById('cart-total').innerText = `€${total.toFixed(2)}`;
+            document.getElementById('paypal-button-container').innerHTML = '';
+            
+            if (total > 0) {
+                discordArea.style.display = 'block';
+                renderPaypal(total);
+                validarCheckout();
+            } else {
+                discordArea.style.display = 'none';
+            }
+        }
+
+        function enviarEmailConfirmacao(detalhesPagamento) {
+            const params = {
+                to_name: detalhesPagamento.payer.name.given_name,
+                to_email: detalhesPagamento.payer.email_address,
+                discord_user: document.getElementById('discordUser').value,
+                items: carrinho.map(i => i.nome).join(", "),
+                total: document.getElementById('cart-total').innerText
+            };
+            emailjs.send("service_0x0yt9s", "template_t0sb1oe", params);
+        }
+
+        function renderPaypal(totalFinal) {
+            paypal.Buttons({
+                createOrder: (data, actions) => {
+                    return actions.order.create({ purchase_units: [{ amount: { currency_code: 'EUR', value: totalFinal.toFixed(2) } }] });
+                },
+                onApprove: (data, actions) => {
+                    return actions.order.capture().then(details => {
+                        enviarEmailConfirmacao(details);
+                        alert('Order successful! Check Discord.');
+                        carrinho = [];
+                        document.getElementById('discordUser').value = '';
+                        atualizarCarrinhoUI();
+                        toggleCart();
+                    });
+                }
+            }).render('#paypal-button-container');
+        }
+
+        window.onclick = e => { if (e.target.classList.contains('modal')) fecharModal(); }
+    </script>
+</body>
+</html>
