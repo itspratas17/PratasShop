@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,101 +18,36 @@
         
         .container { max-width: 1100px; margin: 40px auto; padding: 20px; text-align: center; }
         
-        /* Categorias */
         .menu-categorias { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 30px; }
         .card-categoria { position: relative; height: 180px; border-radius: 12px; overflow: hidden; cursor: pointer; border: 2px solid #333; }
         .card-categoria img { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; transition: 0.3s; }
         .card-categoria:hover img { opacity: 0.7; transform: scale(1.05); }
         .card-categoria h2 { position: absolute; bottom: 15px; left: 15px; font-size: 22px; }
 
-        /* Itens */
         #areaItens { display: none; }
         .lista-subitens { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
         .item-clicavel { background: #1a1a1a; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #333; text-align: left; }
         .item-img { width: 100%; height: 140px; object-fit: cover; border-bottom: 2px solid #ff0844; }
         .item-info { padding: 12px; }
 
-        /* Painel Admin Estilizado */
         #adminPanel { display: none; background: #111; padding: 30px; border-radius: 15px; border: 2px solid #ff0844; margin: 20px auto; max-width: 700px; text-align: left; box-shadow: 0 0 30px rgba(255, 8, 68, 0.2); }
         .admin-input { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; }
         .btn-admin-save { background: #ff0844; color: white; padding: 14px; border: none; width: 100%; cursor: pointer; font-weight: bold; border-radius: 8px; margin-top: 10px; }
         
-        /* Lista de Gestão (Edição) */
         .gestao-lista { margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; }
         .gestao-item { display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; padding: 10px; border-radius: 5px; margin-bottom: 8px; border: 1px solid #222; }
         .gestao-btns button { padding: 5px 10px; cursor: pointer; border-radius: 4px; border: none; font-size: 12px; font-weight: bold; margin-left: 5px; }
-        .btn-edit { background: #ffb347; color: #000; }
         .btn-del { background: #ff0844; color: #fff; }
 
-        /* UPLOAD MELHORADO (ESTILO IMAGEM) */
-        .upload-container { 
-            border: 1px dashed #444; 
-            border-radius: 12px; 
-            padding: 30px 20px; 
-            text-align: center; 
-            background: #151515; 
-            margin: 15px 0; 
-        }
-        .btn-enviar-img { 
-            background: linear-gradient(90deg, #ffb347 0%, #ff4b2b 100%); 
-            color: white; 
-            padding: 12px 30px; 
-            border-radius: 8px; 
-            border: none; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-bottom: 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 16px;
-        }
-        .btn-enviar-img i {
-            background: #fff;
-            color: #ff4b2b;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-        .upload-text {
-            color: #ccc;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-        .url-highlight {
-            text-decoration: underline;
-            text-decoration-color: #ffb347;
-            text-decoration-thickness: 2px;
-            font-weight: bold;
-            color: #fff;
-        }
-        .url-input-simple { 
-            background: transparent; 
-            border: none; 
-            border-bottom: 1px solid #444; 
-            color: #ff0844; 
-            text-align: center; 
-            width: 80%; 
-            padding: 8px; 
-            font-size: 13px; 
-            margin-top: 10px;
-        }
-        .url-input-simple:focus {
-            outline: none;
-            border-bottom-color: #ff0844;
-        }
-
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: #1a1a1a; padding: 30px; border-radius: 15px; max-width: 450px; width: 90%; text-align: center; border: 1px solid #ff0844; }
+        .upload-container { border: 1px dashed #444; border-radius: 12px; padding: 30px 20px; text-align: center; background: #151515; margin: 15px 0; }
+        .btn-enviar-img { background: linear-gradient(90deg, #ffb347 0%, #ff4b2b 100%); color: white; padding: 12px 30px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 10px; font-size: 16px; }
         
         .sidebar-cart { position: fixed; right: -100%; top: 0; width: 320px; height: 100vh; background: #1a1a1a; border-left: 2px solid #ff0844; z-index: 2000; transition: 0.4s; padding: 20px; display: flex; flex-direction: column; }
         .sidebar-cart.active { right: 0; }
 
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: #1a1a1a; padding: 30px; border-radius: 15px; max-width: 450px; width: 90%; text-align: center; border: 1px solid #ff0844; }
+        
         .animar { animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -124,7 +59,7 @@
             <img src="favicon.jpg" alt="Logo">
             <span>Pratas Shop</span>
         </div>
-        <button class="cart-btn" onclick="toggleCart()">Carrinho (<span id="cart-count">0</span>)</button>
+        <button class="cart-btn" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
     </header>
 
     <div class="container">
@@ -147,62 +82,50 @@
         </div>
 
         <div id="areaItens" class="animar">
-            <button onclick="voltarAoMenu()" style="background:transparent; color:#ff0844; border:1px solid #ff0844; padding:8px 15px; border-radius:5px; cursor:pointer; margin-bottom:20px;">← Voltar</button>
+            <button onclick="voltarAoMenu()" style="background:transparent; color:#ff0844; border:1px solid #ff0844; padding:8px 15px; border-radius:5px; cursor:pointer; margin-bottom:20px;">← Back</button>
             <h2 id="tituloCategoria" style="color:#ff0844; text-transform: uppercase;"></h2>
             <div id="listaItens" class="lista-subitens"></div>
         </div>
 
         <div id="adminPanel" class="animar">
             <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2 id="adminTitle" style="color:#ff0844;">Novo Produto</h2>
+                <h2 id="adminTitle" style="color:#ff0844;">New Product</h2>
                 <button onclick="fecharAdmin()" style="background:transparent; color:#ff0844; border:none; font-size:24px; cursor:pointer;">&times;</button>
             </div>
-            
             <input type="hidden" id="editId">
-            <input type="text" id="admNome" class="admin-input" placeholder="Nome do Produto">
-            <input type="text" id="admDesc" class="admin-input" placeholder="Descrição (Opcional)">
-            <input type="number" id="admPreco" class="admin-input" placeholder="Preço (€)">
-            
+            <input type="text" id="admNome" class="admin-input" placeholder="Product Name">
+            <input type="text" id="admDesc" class="admin-input" placeholder="Description (Optional)">
+            <input type="number" id="admPreco" class="admin-input" placeholder="Price (€)">
             <select id="admCat" class="admin-input">
                 <option value="streaming">Streaming</option>
                 <option value="games">Games</option>
                 <option value="social">Social</option>
             </select>
-
-            <div class="upload-container" id="dropZone">
+            <div class="upload-container">
                 <input type="file" id="admImgFile" hidden accept="image/*" onchange="handleFile(this.files[0])">
-                
-                <button class="btn-enviar-img" onclick="document.getElementById('admImgFile').click()">
-                    <i class="fas fa-plus"></i> Enviar imagem
-                </button>
-                
-                <p class="upload-text">
-                    Solte uma imagem ou Colar <span class="url-highlight">URL</span>
-                </p>
-                
-                <input type="text" id="admImgURL" class="url-input-simple" placeholder="Cole o link da imagem aqui" oninput="handleURL(this.value)">
-                
-                <div id="mini-preview" style="margin-top:15px; display:none; text-align: center;">
-                    <img id="imgPre" src="" style="width:60px; height:60px; object-fit:cover; border-radius:8px; border:2px solid #ff0844; display: inline-block;">
-                </div>
+                <button class="btn-enviar-img" onclick="document.getElementById('admImgFile').click()">Upload Image</button>
+                <input type="text" id="admImgURL" class="admin-input" placeholder="Or paste image URL here" oninput="handleURL(this.value)">
+                <div id="mini-preview" style="display:none; margin-top:10px;"><img id="imgPre" style="width:60px; height:60px; object-fit:cover; border-radius:5px;"></div>
             </div>
-
-            <button class="btn-admin-save" id="btnSalvar" onclick="salvarNovoProduto()">ADICIONAR PRODUTO</button>
-
-            <div class="gestao-lista">
-                <h4 style="margin-bottom:10px; font-size:14px; color:#888;">Gerir Produtos Existentes:</h4>
-                <div id="listaGestao"></div>
-            </div>
+            <button class="btn-admin-save" id="btnSalvar" onclick="salvarNovoProduto()">ADD PRODUCT</button>
+            <div class="gestao-lista" id="listaGestao"></div>
         </div>
     </div>
 
     <div id="sidebarCart" class="sidebar-cart">
-        <h2>Carrinho</h2>
-        <div id="cart-items" style="flex-grow:1; margin-top:20px;"></div>
-        <div style="border-top:1px solid #333; padding-top:15px;">
-            <p>Total: <span id="cart-total">€0.00</span></p>
-            <div id="paypal-button-container" style="margin-top:10px;"></div>
-            <button onclick="toggleCart()" style="width:100%; background:#222; color:white; border:none; padding:10px; margin-top:5px; cursor:pointer;">Fechar</button>
+        <h2 style="color: #ff0844; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">Your Cart</h2>
+        <div id="cart-items" style="flex-grow:1; overflow-y: auto;"></div>
+        
+        <div style="border-top:1px solid #333; padding-top:15px; margin-top: 10px;">
+            <p style="font-size: 18px; margin-bottom: 15px;">Total: <span id="cart-total" style="font-weight: bold; color: #ff0844;">€0.00</span></p>
+            
+            <label style="font-size: 11px; color: #888; display: block; margin-bottom: 5px;">DISCORD USERNAME:</label>
+            <input type="text" id="discordUser" placeholder="Ex: @user#0000" 
+                   style="width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 5px; margin-bottom: 15px;">
+
+            <div id="paypal-button-container"></div>
+            
+            <button onclick="toggleCart()" style="width:100%; background:transparent; color:#666; border:none; padding:10px; margin-top:5px; cursor:pointer; font-size: 12px;">Close Cart</button>
         </div>
     </div>
 
@@ -213,7 +136,7 @@
             <h2 id="modalNome" style="margin-top:10px;"></h2>
             <p id="modalDesc" style="color:#888; margin:10px 0;"></p>
             <h1 id="modalPreco" style="color:#ff0844;"></h1>
-            <button class="btn-admin-save" onclick="adicionarAoCarrinho()">ADICIONAR AO CARRINHO</button>
+            <button class="btn-admin-save" onclick="adicionarAoCarrinho()">ADD TO CART</button>
         </div>
     </div>
 
@@ -223,13 +146,13 @@
         let imagemFinal = null;
         let produtoAtual = null;
 
-        // Atalho DAS
+        // --- ADMIN SYSTEM ---
         let seq = "";
         window.addEventListener("keydown", (e) => {
             seq += e.key.toUpperCase();
             if (seq.includes("DAS")) {
                 seq = "";
-                if(prompt("Senha:") === "AdminPratasShop") {
+                if(prompt("Password:") === "AdminPratasShop") {
                     document.getElementById('adminPanel').style.display = 'block';
                     atualizarListaGestao();
                 }
@@ -262,7 +185,7 @@
             const preco = document.getElementById('admPreco').value;
             const desc = document.getElementById('admDesc').value || "";
             const cat = document.getElementById('admCat').value;
-            if(!nome || !preco || !imagemFinal) return alert("Preenche os campos obrigatórios!");
+            if(!nome || !preco || !imagemFinal) return alert("Please fill all fields!");
             if(id) {
                 const index = produtos.findIndex(p => p.id == id);
                 produtos[index] = { id: parseInt(id), nome, preco: parseFloat(preco), desc, img: imagemFinal, categoria: cat };
@@ -273,23 +196,8 @@
             location.reload();
         }
 
-        function prepararEdicao(id) {
-            const p = produtos.find(item => item.id == id);
-            document.getElementById('adminTitle').innerText = "Editar Produto";
-            document.getElementById('btnSalvar').innerText = "ATUALIZAR PRODUTO";
-            document.getElementById('editId').value = p.id;
-            document.getElementById('admNome').value = p.nome;
-            document.getElementById('admPreco').value = p.preco;
-            document.getElementById('admDesc').value = p.desc;
-            document.getElementById('admCat').value = p.categoria;
-            imagemFinal = p.img;
-            document.getElementById('mini-preview').style.display = 'block';
-            document.getElementById('imgPre').src = p.img;
-            window.scrollTo(0, 0);
-        }
-
         function apagarProduto(id) {
-            if(confirm("Apagar este produto permanentemente?")) {
+            if(confirm("Delete this product?")) {
                 produtos = produtos.filter(p => p.id != id);
                 localStorage.setItem('pratas_stock', JSON.stringify(produtos));
                 atualizarListaGestao();
@@ -300,26 +208,23 @@
             const container = document.getElementById('listaGestao');
             container.innerHTML = produtos.map(p => `
                 <div class="gestao-item">
-                    <span style="font-size:13px;">${p.nome} - €${p.preco.toFixed(2)}</span>
+                    <span>${p.nome}</span>
                     <div class="gestao-btns">
-                        <button class="btn-edit" onclick="prepararEdicao(${p.id})">Editar</button>
-                        <button class="btn-del" onclick="apagarProduto(${p.id})">X</button>
+                        <button class="btn-del" onclick="apagarProduto(${p.id})">Delete</button>
                     </div>
                 </div>
             `).join('');
         }
 
         function resetForm() {
-            document.getElementById('adminTitle').innerText = "Novo Produto";
-            document.getElementById('btnSalvar').innerText = "ADICIONAR PRODUTO";
             document.getElementById('editId').value = "";
             document.getElementById('admNome').value = "";
             document.getElementById('admPreco').value = "";
-            document.getElementById('admDesc').value = "";
             document.getElementById('mini-preview').style.display = 'none';
             imagemFinal = null;
         }
 
+        // --- NAVIGATION ---
         function abrirCategoria(cat) {
             document.getElementById('menuPrincipal').style.display = 'none';
             document.getElementById('areaItens').style.display = 'block';
@@ -329,8 +234,10 @@
                 <div class="item-clicavel" onclick="abrirDetalhe(${p.id})">
                     <img src="${p.img}" class="item-img">
                     <div class="item-info"><h3>${p.nome}</h3><span>€${p.preco.toFixed(2)}</span></div>
-                </div>`).join('') || "<p>Sem produtos.</p>";
+                </div>`).join('') || "<p>Coming soon.</p>";
         }
+
+        function voltarAoMenu() { document.getElementById('menuPrincipal').style.display = 'block'; document.getElementById('areaItens').style.display = 'none'; }
 
         function abrirDetalhe(id) {
             const p = produtos.find(item => item.id == id);
@@ -342,21 +249,69 @@
             document.getElementById('modalDetalhe').style.display = 'flex';
         }
 
+        function fecharModal() { document.getElementById('modalDetalhe').style.display = 'none'; }
+
+        // --- CART & PAYPAL ---
+        function toggleCart() { 
+            document.getElementById('sidebarCart').classList.toggle('active'); 
+            if(document.getElementById('sidebarCart').classList.contains('active')) {
+                renderPaypalButtons();
+            }
+        }
+
         function adicionarAoCarrinho() {
             carrinho.push(produtoAtual);
+            atualizarCarrinhoUI();
+            fecharModal();
+            toggleCart();
+        }
+
+        function atualizarCarrinhoUI() {
             document.getElementById('cart-count').innerText = carrinho.length;
             let total = 0;
             document.getElementById('cart-items').innerHTML = carrinho.map(i => {
                 total += i.preco;
-                return `<div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>${i.nome}</span><span>€${i.preco.toFixed(2)}</span></div>`;
+                return `<div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size: 14px;">
+                            <span>${i.nome}</span>
+                            <span>€${i.preco.toFixed(2)}</span>
+                        </div>`;
             }).join('');
             document.getElementById('cart-total').innerText = `€${total.toFixed(2)}`;
-            fecharModal(); toggleCart();
         }
 
-        function fecharModal() { document.getElementById('modalDetalhe').style.display = 'none'; }
-        function toggleCart() { document.getElementById('sidebarCart').classList.toggle('active'); }
-        function voltarAoMenu() { document.getElementById('menuPrincipal').style.display = 'block'; document.getElementById('areaItens').style.display = 'none'; }
+        function renderPaypalButtons() {
+            document.getElementById('paypal-button-container').innerHTML = '';
+            if(carrinho.length === 0) return;
+
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    const discord = document.getElementById('discordUser').value;
+                    if (!discord || discord.trim() === "") {
+                        alert("Please enter your Discord username!");
+                        return actions.reject();
+                    }
+
+                    let valorTotal = document.getElementById('cart-total').innerText.replace('€', '').trim();
+                    return actions.order.create({
+                        purchase_units: [{
+                            description: "Pratas Shop Purchase - Discord: " + discord,
+                            amount: { value: valorTotal }
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        alert('Success! Payment received from ' + details.payer.name.given_name + '. We will contact you on Discord: ' + document.getElementById('discordUser').value);
+                        carrinho = [];
+                        atualizarCarrinhoUI();
+                        toggleCart();
+                    });
+                },
+                onError: function(err) {
+                    alert("Payment error. Please check your Discord username and try again.");
+                }
+            }).render('#paypal-button-container');
+        }
     </script>
 </body>
 </html>
