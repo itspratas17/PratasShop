@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pratas Shop</title>
+    <title>Pratas Shop | Official Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <link rel="icon" href="favicon.jpg" type="image/jpeg">
     <script src="https://www.paypal.com/sdk/js?client-id=Af2JphH-9dx1TEPujfpjDFUSQzIEqOSgm1uAJ7tldWqcX0hSWANU4g2BbT2HTPJN5_Y4t-Q7Czu3fKsl&currency=EUR"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,394 +15,234 @@
         header { background: #1a1a1a; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff0844; position: sticky; top: 0; z-index: 1000; }
         .logo { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: bold; color: #ff0844; cursor: pointer; }
         .logo img { width: 40px; height: 40px; border-radius: 8px; }
-        .cart-btn { background: #ff0844; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .cart-btn { background: #ff0844; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .cart-btn:hover { background: #d6073a; }
         
         .container { max-width: 1100px; margin: 40px auto; padding: 20px; text-align: center; }
         
-        .menu-categorias { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 30px; }
-        .card-categoria { position: relative; height: 180px; border-radius: 12px; overflow: hidden; cursor: pointer; border: 2px solid #333; }
-        .card-categoria img { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; transition: 0.3s; }
-        .card-categoria:hover img { opacity: 0.7; transform: scale(1.05); }
-        .card-categoria h2 { position: absolute; bottom: 15px; left: 15px; font-size: 22px; }
+        /* CATEGORIES */
+        .category-menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 30px; }
+        .category-card { position: relative; height: 180px; border-radius: 12px; overflow: hidden; cursor: pointer; border: 2px solid #333; transition: 0.3s; }
+        .category-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; transition: 0.3s; }
+        .category-card:hover img { opacity: 0.7; transform: scale(1.05); }
+        .category-card:hover { border-color: #ff0844; }
+        .category-card h2 { position: absolute; bottom: 15px; left: 15px; font-size: 22px; letter-spacing: 1px; }
 
-        #areaItens { display: none; }
-        .lista-subitens { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
-        .item-clicavel { background: #1a1a1a; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #333; text-align: left; }
-        .item-img { width: 100%; height: 140px; object-fit: cover; border-bottom: 2px solid #ff0844; }
-        .item-info { padding: 12px; }
+        #itemsArea { display: none; }
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .product-card { background: #1a1a1a; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #333; text-align: left; transition: 0.3s; }
+        .product-card:hover { transform: translateY(-5px); border-color: #ff0844; }
+        .item-img { width: 100%; height: 160px; object-fit: cover; border-bottom: 2px solid #ff0844; }
+        .item-info { padding: 15px; }
 
-        #adminPanel { display: none; background: #111; padding: 30px; border-radius: 15px; border: 2px solid #ff0844; margin: 20px auto; max-width: 700px; text-align: left; }
-        .admin-input { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; }
-        .btn-admin-save { background: #ff0844; color: white; padding: 14px; border: none; width: 100%; cursor: pointer; font-weight: bold; border-radius: 8px; margin-top: 10px; }
-        
-        .gestao-lista { margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; max-height: 300px; overflow-y: auto; }
-        .gestao-item { display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; padding: 10px; border-radius: 5px; margin-bottom: 8px; border: 1px solid #222; }
-        .btn-edit { background: #ffb347; color: #000; padding: 5px 10px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-del { background: #ff0844; color: #fff; padding: 5px 10px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; }
-
-        #modalCrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; }
-        .crop-wrapper { background: #1a1a1a; padding: 25px; border-radius: 15px; max-width: 600px; width: 90%; border: 1px solid #ff0844; box-shadow: 0 0 20px rgba(255,8,68,0.3); }
-        .crop-container { width: 100%; height: 350px; background: #000; margin-bottom: 20px; border-radius: 8px; overflow: hidden; }
-        .crop-controls { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
-        .btn-tool { background: #333; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .btn-tool:hover { background: #ff0844; transform: scale(1.1); }
-
+        /* SIDEBAR CART */
         .sidebar-cart { position: fixed; right: -100%; top: 0; width: 320px; height: 100vh; background: #1a1a1a; border-left: 2px solid #ff0844; z-index: 2000; transition: 0.4s; padding: 20px; display: flex; flex-direction: column; }
         .sidebar-cart.active { right: 0; }
+        
+        /* MODALS */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: #1a1a1a; padding: 30px; border-radius: 15px; max-width: 450px; width: 90%; text-align: center; border: 1px solid #ff0844; }
+        .btn-action { background: #ff0844; color: white; padding: 14px; border: none; width: 100%; cursor: pointer; font-weight: bold; border-radius: 8px; margin-top: 10px; text-transform: uppercase; }
 
-        .animar { animation: fadeIn 0.3s; }
+        .fade-in { animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 5px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div onclick="voltarAoMenu()" class="logo">
+        <div onclick="backToMenu()" class="logo">
             <img src="favicon.jpg" alt="Logo">
             <span>Pratas Shop</span>
         </div>
-        <button class="cart-btn" onclick="toggleCart()">Carrinho (<span id="cart-count">0</span>)</button>
+        <button class="cart-btn" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
     </header>
 
     <div class="container">
-        <div id="menuPrincipal" class="animar">
+        <div id="mainMenu" class="fade-in">
             <h1>PRATAS <span style="color:#ff0844">SHOP</span></h1>
-            <div class="menu-categorias">
+            <p style="color: #888; margin-top: 10px;">The Best Lifetime Accounts</p>
+            <div class="category-menu">
+                <div class="category-card" onclick="openCategory('streaming')">
+                    <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=500">
+                    <h2>streaming</h2>
                 </div>
-        </div>
-
-        <div id="areaItens" class="animar">
-            <button onclick="voltarAoMenu()" style="background:transparent; color:#ff0844; border:1px solid #ff0844; padding:8px 15px; border-radius:5px; cursor:pointer; margin-bottom:20px;">← Voltar</button>
-            <h2 id="tituloCategoria" style="color:#ff0844; text-transform: uppercase;"></h2>
-            <div id="listaItens" class="lista-subitens"></div>
-        </div>
-
-        <div id="adminPanel" class="animar">
-            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2 id="adminTitle" style="color:#ff0844;">Painel Administrativo</h2>
-                <button onclick="fecharAdmin()" style="background:transparent; color:#ff0844; border:none; font-size:24px; cursor:pointer;">&times;</button>
-            </div>
-
-            <div style="border: 1px solid #333; padding: 15px; border-radius: 10px; margin-bottom: 25px;">
-                <h3 style="color:#ff0844; margin-bottom: 10px;">Editar Categorias</h3>
-                <select id="selCatEditar" class="admin-input">
-                    <option value="streaming">Streaming</option>
-                    <option value="games">Games</option>
-                    <option value="social">Social</option>
-                </select>
-                <input type="text" id="novoNomeCat" class="admin-input" placeholder="Novo Nome">
-                <div style="display:flex; gap:10px; margin-top:5px;">
-                    <input type="file" id="imgCatFile" hidden accept="image/*" onchange="iniciarCropCat(this.files[0])">
-                    <button onclick="document.getElementById('imgCatFile').click()" style="flex:1; background:#333; color:white; border:1px solid #ff0844; padding:10px; border-radius:5px; cursor:pointer;">Imagem do PC</button>
-                    <button onclick="salvarAlteracaoCategoria()" style="flex:1; background:#ff0844; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold;">Guardar Categoria</button>
+                <div class="category-card" onclick="openCategory('games')">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500">
+                    <h2>Games</h2>
+                </div>
+                <div class="category-card" onclick="openCategory('social')">
+                    <img src="https://images.unsplash.com/photo-1614102073832-030967418971?w=500">
+                    <h2>Social</h2>
                 </div>
             </div>
-
-            <hr style="border:0; border-top:1px solid #333; margin-bottom:25px;">
-            
-            <h3 style="color:#ff0844; margin-bottom: 10px;">Gerir Produto</h3>
-            <input type="hidden" id="editId">
-            <input type="text" id="admNome" class="admin-input" placeholder="Nome do Produto">
-            <input type="text" id="admDesc" class="admin-input" placeholder="Descrição">
-            <input type="number" id="admPreco" class="admin-input" placeholder="Preço (€)" step="0.01">
-            <select id="admCat" class="admin-input">
-                <option value="streaming">Streaming</option>
-                <option value="games">Games</option>
-                <option value="social">Social</option>
-            </select>
-            
-            <div style="border: 1px dashed #444; padding: 20px; text-align: center; border-radius: 10px; margin: 15px 0;">
-                <input type="file" id="admImgFile" hidden accept="image/*" onchange="iniciarCrop(this.files[0])">
-                <button onclick="document.getElementById('admImgFile').click()" style="background:#ff0844; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; font-weight:bold;">Escolher e Recortar Imagem</button>
-                <div id="mini-preview" style="display:none; margin-top:15px;">
-                    <img id="imgPre" style="width:100px; height:100px; object-fit:cover; border:2px solid #ff0844; border-radius:8px;">
-                </div>
-            </div>
-            
-            <button class="btn-admin-save" id="btnSalvar" onclick="salvarProduto()">GUARDAR PRODUTO</button>
-            <div class="gestao-lista" id="listaGestao"></div>
         </div>
-    </div>
 
-    <div id="modalCrop">
-        <div class="crop-wrapper">
-            <h2 style="margin-bottom: 20px; color: #ff0844; text-align: center;">Ajustar Imagem</h2>
-            <div class="crop-container">
-                <img id="imageToCrop">
+        <div id="itemsArea" class="fade-in">
+            <div style="text-align: left;">
+                <button onclick="backToMenu()" style="background:transparent; color:#ff0844; border:1px solid #ff0844; padding:8px 15px; border-radius:5px; cursor:pointer; margin-bottom:20px;">← Back to Menu</button>
             </div>
-            <div class="crop-controls">
-                <button class="btn-tool" onclick="cropper.rotate(-90)" title="Rodar Esquerda"><i class="fas fa-undo"></i></button>
-                <button class="btn-tool" onclick="cropper.zoom(0.1)" title="Zoom In"><i class="fas fa-search-plus"></i></button>
-                <button class="btn-tool" onclick="cropper.zoom(-0.1)" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
-                <button class="btn-tool" onclick="cropper.rotate(90)" title="Rodar Direita"><i class="fas fa-redo"></i></button>
-            </div>
-            <div style="display:flex; gap: 10px;">
-                <button onclick="confirmarCrop()" style="flex:2; background:#ff0844; color:white; border:none; padding:15px; border-radius:8px; font-weight:bold; cursor:pointer;">APLICAR RECORTE</button>
-                <button onclick="cancelarCrop()" style="flex:1; background:#333; color:white; border:none; padding:15px; border-radius:8px; cursor:pointer;">CANCELAR</button>
-            </div>
+            <h2 id="categoryTitle" style="color:#ff0844; text-transform: uppercase; margin-bottom: 20px;"></h2>
+            <div id="itemsList" class="items-grid"></div>
         </div>
     </div>
 
     <div id="sidebarCart" class="sidebar-cart">
-        <h2 style="color:#ff0844; margin-bottom:20px;">Carrinho</h2>
+        <h2 style="color:#ff0844; margin-bottom:20px;">Your Cart</h2>
         <div id="cart-items" style="flex-grow:1; overflow-y:auto;"></div>
         <div style="padding-top:15px; border-top:1px solid #333;">
             <p style="font-size:18px; margin-bottom:15px;">Total: <span id="cart-total" style="color:#ff0844; font-weight:bold;">€0.00</span></p>
-            <input type="text" id="discordUser" placeholder="Seu Discord @User" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:white; margin-bottom:15px;">
+            <input type="text" id="discordUser" placeholder="Your Discord @Username">
             <div id="paypal-button-container"></div>
-            <button onclick="toggleCart()" style="width:100%; background:transparent; border:none; color:#666; margin-top:10px; cursor:pointer;">Fechar</button>
+            <button onclick="toggleCart()" style="width:100%; background:transparent; border:none; color:#666; margin-top:10px; cursor:pointer;">Close</button>
         </div>
     </div>
 
-    <div id="modalDetalhe" class="modal">
+    <div id="modalDetail" class="modal">
         <div class="modal-content">
-            <span style="float:right; cursor:pointer; font-size:24px;" onclick="fecharModal()">&times;</span>
-            <div id="modalIcone"></div>
-            <h2 id="modalNome" style="margin-top:10px;"></h2>
-            <p id="modalDesc" style="color:#888; margin:10px 0;"></p>
-            <h1 id="modalPreco" style="color:#ff0844;"></h1>
-            <button class="btn-admin-save" onclick="adicionarAoCarrinho()">ADICIONAR AO CARRINHO</button>
+            <span style="float:right; cursor:pointer; font-size:24px;" onclick="closeModal()">&times;</span>
+            <div id="modalIcon"></div>
+            <h2 id="modalName" style="margin-top:10px;"></h2>
+            <p id="modalDesc" style="color:#888; margin:15px 0; font-size: 0.9rem; line-height: 1.4;"></p>
+            <h1 id="modalPrice" style="color:#ff0844; margin-bottom: 15px;"></h1>
+            <button class="btn-action" onclick="addToCart()">Add To Cart</button>
         </div>
     </div>
 
     <script>
-        let produtos = JSON.parse(localStorage.getItem('pratas_stock')) || [];
-        let configCats = JSON.parse(localStorage.getItem('pratas_cats')) || {
-            streaming: { nome: "STREAMING", img: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=500" },
-            games: { nome: "GAMES", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500" },
-            social: { nome: "SOCIAL", img: "https://images.unsplash.com/photo-1614102073832-030967418971?w=500" }
-        };
-
-        let carrinho = [];
-        let cropper = null;
-        let imagemFinal = null;
-        let imagemCatFinal = null;
-        let produtoAtual = null;
-        let modoCrop = "produto";
-
-        // --- ACESSO ADMIN ---
-        let seq = "";
-        window.addEventListener("keydown", (e) => {
-            seq += e.key.toUpperCase();
-            if (seq.includes("DAS")) {
-                seq = "";
-                if(prompt("Password Admin:") === "AdminPratasShop") {
-                    document.getElementById('adminPanel').style.display = 'block';
-                    atualizarListaGestao();
-                }
-            }
-        });
-
-        function fecharAdmin() { document.getElementById('adminPanel').style.display = 'none'; resetForm(); }
-
-        // --- LÓGICA DE RECORTE (CROP) ---
-        function iniciarCrop(file) {
-            if (!file) return;
-            modoCrop = "produto";
-            processarFicheiroCrop(file);
-        }
-
-        function iniciarCropCat(file) {
-            if (!file) return;
-            modoCrop = "categoria";
-            processarFicheiroCrop(file);
-        }
-
-        function processarFicheiroCrop(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const imgElement = document.getElementById('imageToCrop');
-                imgElement.src = e.target.result;
-                document.getElementById('modalCrop').style.display = 'flex';
-                if (cropper) cropper.destroy();
-                cropper = new Cropper(imgElement, {
-                    aspectRatio: modoCrop === "produto" ? 1 : 16 / 9, 
-                    viewMode: 2, dragMode: 'move', autoCropArea: 1, imageSmoothingQuality: 'high'
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function confirmarCrop() {
-            const canvas = cropper.getCroppedCanvas({ width: 600, height: 600, imageSmoothingQuality: 'high' });
-            const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+        // ==========================================
+        // PRODUCT LIST
+        // ==========================================
+        const products = [
+            // --- STREAMING ---
+            { id: 1, category: 'streaming', name: 'UFC Lifetime FA Account', price: 2.60, desc: '', img: 'https://images.footballfanatics.com/ufc-merchandise/ufc-primary-logo-t-shirt-black-mens_ss5_p-201215183+pv-4+u-r5jj44b6jhglas0xn33f+v-ipjncvn3nlh9gti6nv20.jpg?_hv=2&w=1018' },
+            { id: 2, category: 'streaming', name: 'Crunchyroll Mega Fan Member Lifetime Account', price: 2.60, desc: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfV7G6CS6dWQQYOXI1TmcyQspOU6Gqt0SPyA&s' },
+            { id: 3, category: 'streaming', name: 'Duolingo Lifetime FA Account', price: 3.00, desc: '', img: 'https://static.wikia.nocookie.net/duolingo/images/b/bb/App_Icon_%28Normal%29.jpg/revision/latest?cb=20241118105814' },
+            { id: 4, category: 'streaming', name: 'HBO Max Lifetime FA Account', price: 3.00, desc: '', img: 'https://www.blogdehollywood.com.br/wp-content/uploads/2020/12/hbo-max-logo.jpg' },
+            { id: 5, category: 'streaming', name: 'Netflix Lifetime FA Account', price: 3.00, desc: '', img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASsAAACoCAMAAACPKThEAAAAllBMVEUQEBCwBg/lCRMAERCEChCnCBG0BRAAEBEQEBGvBhBYDQ+NCQ+tBg4OERLOChPoCRKkBQ/tCRUGEBCdBQ+UBA7XChabBg99DRK4BRIAEBSFAw3lCRdTDQ+PBA59Ag0xDw9IDg87DxNqDhDCBhAdEBFBERNaDRVNDg7IBhFlDBJ8AglcCQ1nCQ3SChBwCQ3yBxMqEA4kEBDQb3IiAAAEzElEQVR4nO2d4W6jOBRGIcYYAokBOyQlhaRtsp3pbNvZ93+5NYQQ7g1Z9V9Hm+9IU2lkqYqO7mdsX5d4HgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALkQR/z/hez7UH0MULUbwwW/5SH8sQiiCWJBBiuIy7woRrJaEjbgMFvs6IVTq+z7p9yOaXI+Y6c+nYhhU801ISMU9p1KtVzNCbtXgQ81DPx7hy/uuq2CjiSu9EsQVQYr/+l3/d0Qlt6ywHofigSuCCtIldaWdkL6y4IrgMihzKms2rAzgiiCC0PIQPp9DCFcE5yp7YbP7Bq4mEYHvl8zV7NCHEK4Irq58y5dY614JXBFaVyVfYr3A1RStK2k1K6zdaZ8DV4TWVVq/syVWcprd4YrQuSpjUljbfHk6mYErQuvKzxK2Gs2PRbt0hytC50omSzpj5eahHYQrQucqtRmb3bedFLginFxlFdvnfP7VWoErQufKzyq+zwnh6oqTK2lLetigt8UiiuCKcHKVmreJwwa4opxcuRBO7XPgitDXVWaTfEZs6cPCU49hClcDJ1dxWjb8sCEQzpUPVxfOrkzFjpL1UkRwRejnqzSrKzphbfVRqccUri6cXUnb8H2OFQ+vUsLVQO/KrRoSyfY5KyFeZUoqC676EDZU1Syfq9dMwtXAxZVtfpD5apZLsTcZXA0MrmRZGdZU3SrnSsLVmcFVaupmSzc6nz+PpYGrgYurzAYvtK50uLO0sOCqI5Zlwvs5+liXcDUwcuVCyPc5dWINXJ0ZXLUhbPhhw/KtJk9CuDq7KpOEhfCzqklhwZV/XjXUzTs7mPEruBoYuzK2inO6bFg1bna/hBCuRiFs+JPQze5w1XNxFTtXNTts0LNNMA4hXI1DyJqqevvWhhCuWsauUuMKi/VzdDkOIVyNJizb/OD9nDdr4Kpj5KoLYZLwG9xVXUq4aiGu2hDOeVM1q2wGVy3UVVaWv3i3ftnA1Ymxqy6Efx+vQpgYuGqhrlxhPYt3NrvH1TBhwdVIVmY+BJ/d34MhhHA1qiuZfagdc6WrBK5aWF05V+Lh6t5aVfYrLLgihbVWYs37OY2VcHXtKl6r4sAehNrWGVxNuRKRCpmrl8rAFXflp34jPPHzKoSlhCvuyo+b9u4jC2Fu+hDC1ViV37nifwK97EMIV2NXYeB0iMerfU6ZOo9wde3KU6ypqmUtUVeTriJhr0KYwdV0XRW7T1ZYdZnC1aQrT7CXgeSxhasbrlRAQrjVq0rC1bSr6EBduX2OwXPwhivB761t2hDC1aSrD77PSeDqhqtFwZuqJoOrSVduwOdNVQtXN1ypOd/n2Biupl15YsUKK5UhXE27ejD88qhBXd2qqz0PIVzdcBW5fQ7v58T3/n7Rm64Ua6rqVQZX0xmMih2/PCqRwWlXbuzq3lqGurrhSl01Vc1du1LOVewkhWG42bT/gsvrkBde3qN1v8S66/dsi8opam+2rz9+zvfH3e/D5ZXk3sPvp6f9/HmdmPhltZ3l+fK+62r/uDsUSp2+HqAootGb/yOvcLix7vsCxD+7Xx/qnuvKK776vQiLohB3XVbdG7W/WCvR8AMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOCr/AtF5VXpxElRzAAAAABJRU5ErkJggg==' },
+            { id: 6, category: 'streaming', name: 'Prime Video Lifetime FA Account', price: 2.70, desc: '', img: 'https://cloud.estacaonerd.com/wp-content/uploads/2020/10/12194108/Amazon-Prime.png' },
+            { id: 7, category: 'streaming', name: 'Spotify Premium Lifetime FA Account', price: 3.00, desc: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwDiicpDsawpNveT7Ota2-EC_vZbP8vneTbg&s' },
+            { id: 8, category: 'streaming', name: 'NBA Lifetime FA Account', price: 2.90, desc: '', img: 'https://turbologo.com/articles/wp-content/uploads/2019/10/NBA-new-logo.png.webp' },
+            { id: 9, category: 'streaming', name: 'YouTube Premium Lifetime FA Account', price: 3.00, desc: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRSibuzODLb5lETQ6fI9ebq-FQjWwL-7cBWQ&s' },
             
-            if (modoCrop === "produto") {
-                imagemFinal = dataUrl;
-                document.getElementById('imgPre').src = imagemFinal;
-                document.getElementById('mini-preview').style.display = 'block';
-            } else {
-                imagemCatFinal = dataUrl;
-            }
-            document.getElementById('modalCrop').style.display = 'none';
-        }
-
-        function cancelarCrop() {
-            document.getElementById('modalCrop').style.display = 'none';
-        }
-
-        // --- GESTÃO DE CATEGORIAS ---
-        function salvarAlteracaoCategoria() {
-            const id = document.getElementById('selCatEditar').value;
-            const novoNome = document.getElementById('novoNomeCat').value;
-            if (novoNome) configCats[id].nome = novoNome.toUpperCase();
-            if (imagemCatFinal) configCats[id].img = imagemCatFinal;
+            // --- GAMES ---
+            { id: 10, category: 'games', name: 'Minecraft FA Account', price: 6.90, desc: '', img: 'https://i.imgur.com/nKsYRdJ.png'},
+            { id: 11, category: 'games', name: 'Clash Royale Trophies 1000 - 2500 FA Account', price: 7.50, desc: '💎 1000–2500 trophies: €7,50 ⚔️ 2500–5000 trophies: €9,50 🏆 5000–7000 FA Account: €14,50 🔥 7000–10,000 FA Account: €18,50 🌟 10,000–12,000 FA Account: €24,50', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsCMMZX8mmROPkI7aJKsjh4H7k5vsX-9fYCA&s' },
+            { id: 12, category: 'games', name: 'GTA 5 - FULL ACESS ', price: 9.70, desc: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgywfBZ59qYS0z-DWqLOUSeLL5hdzV4rQJzg&s' },
+            { id: 13, category: 'games', name: 'VALORANT 1–20 Level EU FA Account', price: 7.00, desc: '🎯 VALORANT (1-20 Level) Ranked Ready EU FULL ACCESS Account: €7 ⚔️ VALORANT KNIFE + Skins | 1000 - 3000 VP (1-20 Level) Ranked Ready EU FA Account: €15 🔪 VALORANT KNIFE + Skins | 2000 - 5000 VP (20 - 40 Level) Ranked Ready EU FA Account: €20 🔥 VALORANT KNIFE + Skins | 3000 - 10,000 VP (40 - 100 Level) Ranked Ready EU FA Account: €25 🌟 VALORANT KNIFE + Skins | 5000 - 20,000 VP (50 - 200 Level) Ranked Ready EU FA Account: €30 💎 VALORANT KNIFE + Skins | 30,000 - 55,000 VP (100 - 300+ Level) Ranked Ready EU FA Account: €55', img: 'https://i.pinimg.com/736x/cf/ae/88/cfae886e263126f685510e2f45b82970.jpg' },
+            { id: 14, category: 'games', name: 'Roblox 1.000 - 2.500 Robux :Robux:  FA ACCOUNT', price: 9.00, desc: '🎮 Roblox 1,000–2,500 Robux FA Account: €9 💎 Roblox 2,500–5,000 Robux FA Account: €11 ⚡ Roblox 5,000–10,000 Robux FA Account: €14 🔹 Roblox 10,500–15,000 Robux FA Account: €18 🌟 Roblox 20,000–40,000 Robux FA Account: €23 🏆 Roblox 50,000–250,000 Robux FA Account: €32', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFFrA7HfStaBDNccH61fvA8SefdrZtROTxQA&s' },
+            { id: 15, category: 'games', name: 'CS2 FA - 5.000 , 10.000 Hours Account', price: 6.00, desc: '🎮 CS2 FA – 5,000 / 10,000 Hours Account: €6 ⚡ CS2 FA – 10,000+ Hours Account: €10 🔰 CS2 FA Prime Account (0–300 Hrs / 0–2 Medals): €12 🏆 CS2 FA Prime Account (1,100–4,000 Hrs / 6–8 Medals): €25', img: 'https://static.wikia.nocookie.net/logopedia/images/4/49/Counter-Strike_2_%28Icon%29.png/revision/latest?cb=20230330015359' },
+            { id: 16, category: 'games', name: 'Red Dead Redemption 2 Social Club FA Account', price: 7.00, desc: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjkOB312C3zpg6_KaeMWTCoLNQxDdWHjIp9g&s' },
+            { id: 17, category: 'games', name: 'Rainbow Six Siege Ranked Ready 10-50 Level FA Account', price: 8.00, desc: '🎮 Rainbow Six Siege Ranked Ready 10–50 Level FA Account: €8 🔥 Rainbow Six Siege 100+ Skins / Ranked Ready 100–300 Level FA Account: €28', img: 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Rainbow_Six_siege_photo_2014-06-14_17-51.jpg' },
+            { id: 18, category: 'games', name: 'Black Ops 6 (0-100 Level) FA Account', price: 16.00, desc: '🎮 Black Ops 6 (0–100 Level) FA Account: €16 ⚡ Black Ops 6 (100–200 Level) + Rare High Level Items FA Account: €24 🔥 Black Ops 7 (Can include Rare & Exclusive Items) FA Account: €24', img: 'https://gameranx.com/wp-content/uploads/2024/07/black-ops-6-how-to-play-the-beta-dates.jpg' },
+            { id: 19, category: 'games', name: 'DayZ FA ACCOUNT', price: 6.00, desc: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTb5567aihB-ftPR2N3k9h72HiybOJlqJF1Qw&s' },
             
-            localStorage.setItem('pratas_cats', JSON.stringify(configCats));
-            alert("Categoria atualizada!");
-            renderizarCategorias();
-            imagemCatFinal = null;
-            document.getElementById('novoNomeCat').value = "";
-        }
+            
+            
+            
+            // --- SOCIAL ---
+            { id: 20, category: 'social', name: 'Twitch Fresh Account FA', price: 0.50, desc: '📺 Twitch Fresh Account FA: €0,50 ⚡ Twitch 100+ Real Followers Account FA: €0,90 🔹 Twitch 500+ Real Followers Account FA: €1,50 🔥 Twitch 2000+ Real Followers Account FA: €4 💎 Twitch 5000+ Real Followers Account FA: €9 🌟 Twitch 10,000+ Real Followers Account FA: €18 🏆 Twitch 20,000+ Real Followers Account FA: €27 ✨ Twitch 40,000+ Real Followers Account FA: €45', img: 'https://cdn.m7g.twitch.tv/ba46b4e5e395b11efd34/assets/uploads/generic-email-header-1.jpg?w=1200&h=630&fm=jpg&auto=format' },
+            { id: 21, category: 'social', name: 'Discord E-mail Verified (2025) FA Account', price: 0.40, desc: '💻 Discord E-mail Verified (2025) FA Account: €0,40 ⚡ Discord E-mail + Phone Verified (2025) FA Account: €0,70 🔹 Discord E-mail + Phone Verified 3+ Months Aged FA Account: €1 🔥 Discord 2023 Aged FA Account: €1,60 💎 Discord 2020 Aged FA Account: €2,20 🌟 Discord 2019 Aged FA Account: €5 🏆 Discord 2017 Aged FA Account: €9 ✨ Discord 2016 Aged FA Account: €14 🎉 Discord Phone Verified 1 Month Nitro + 2 Boosts FA Account: €2 ⚡ Discord Phone Verified 3 Months Nitro + 2 Boosts FA Account: €7 🔹 14x Server Boosts (1 Month Level 3): €9', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa4W0-BI5CUx35ovhgfEqbeDo9obGXOMgEtg&s' },
+            { id: 22, category: 'social', name: 'ChatGPT Lifetime FA Account', price: 2.00, desc: '', img: 'https://cdn.vectorstock.com/i/500p/13/16/open-ai-logotype-chatgpt-logo-chatbot-chat-vector-46721316.jpg' },
+            { id: 23, category: 'social', name: 'CapCut Pro Lifetime FA Account', price: 6.00, desc: '', img: 'https://www.shutterstock.com/image-vector/capcut-logo-editorial-icon-isolated-600nw-2563301725.jpg' },
+            { id: 24, category: 'social', name: 'Instagram 1k+ Real Followers FA Account', price: 12.00, desc: '📸 Instagram 1k+ Real Followers FA Account: €12 🌟 Instagram 5k+ Real Followers FA Account: €28', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-LEWI88wVZBQZ4YmnUfwXBQb02j8DbJL--g&s' },
+            { id: 25, category: 'social', name: 'TikTok 1k+ Real Followers FA Account', price: 8.00, desc: '🎵 TikTok 1k+ Real Followers FA Account: €8 🔥 TikTok 10k+ Real Followers FA Account: €25 🏆 TikTok 20k+ Real Followers FA Account: €35', img: 'data:image/png;base64,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' }
+              
+        ];
 
-        function renderizarCategorias() {
-            const container = document.querySelector('.menu-categorias');
-            container.innerHTML = Object.keys(configCats).map(id => `
-                <div class="card-categoria" onclick="abrirCategoria('${id}')">
-                    <img src="${configCats[id].img}" alt="${configCats[id].nome}">
-                    <h2>${configCats[id].nome}</h2>
-                </div>
-            `).join('');
-        }
+        let cart = [];
+        let selectedProduct = null;
 
-        // --- GESTÃO DE PRODUTOS ---
-        function salvarProduto() {
-            const id = document.getElementById('editId').value;
-            const nome = document.getElementById('admNome').value;
-            const preco = parseFloat(document.getElementById('admPreco').value);
-            const desc = document.getElementById('admDesc').value;
-            const cat = document.getElementById('admCat').value;
-            if(!nome || !preco || !imagemFinal) return alert("Preencha Nome, Preço e Imagem!");
-            if(id) {
-                const index = produtos.findIndex(p => p.id == id);
-                produtos[index] = { id: parseInt(id), nome, preco, desc, img: imagemFinal, categoria: cat };
-            } else {
-                produtos.push({ id: Date.now(), nome, preco, desc, img: imagemFinal, categoria: cat });
-            }
-            localStorage.setItem('pratas_stock', JSON.stringify(produtos));
-            alert("Produto guardado!");
-            resetForm();
-            atualizarListaGestao();
-        }
+        function openCategory(cat) {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('itemsArea').style.display = 'block';
+            document.getElementById('categoryTitle').innerText = cat;
 
-        function editarProduto(id) {
-            const p = produtos.find(p => p.id == id);
-            document.getElementById('editId').value = p.id;
-            document.getElementById('admNome').value = p.nome;
-            document.getElementById('admPreco').value = p.preco;
-            document.getElementById('admDesc').value = p.desc;
-            document.getElementById('admCat').value = p.categoria;
-            imagemFinal = p.img;
-            document.getElementById('imgPre').src = p.img;
-            document.getElementById('mini-preview').style.display = 'block';
-            document.getElementById('btnSalvar').innerText = "ATUALIZAR PRODUTO";
-        }
-
-        function apagarProduto(id) {
-            if(confirm("Eliminar este produto?")) {
-                produtos = produtos.filter(p => p.id != id);
-                localStorage.setItem('pratas_stock', JSON.stringify(produtos));
-                atualizarListaGestao();
-            }
-        }
-
-        function atualizarListaGestao() {
-            const container = document.getElementById('listaGestao');
-            container.innerHTML = produtos.map(p => `
-                <div class="gestao-item">
-                    <span>${p.nome}</span>
-                    <div>
-                        <button class="btn-edit" onclick="editarProduto(${p.id})">Editar</button>
-                        <button class="btn-del" onclick="apagarProduto(${p.id})">X</button>
+            const filtered = products.filter(p => p.category === cat);
+            const container = document.getElementById('itemsList');
+            
+            container.innerHTML = filtered.map(p => `
+                <div class="product-card" onclick="openDetail(${p.id})">
+                    <img src="${p.img}" class="item-img">
+                    <div class="item-info">
+                        <h3>${p.name}</h3>
+                        <span style="color:#ff0844; font-weight:bold; font-size: 1.2rem;">€${p.price.toFixed(2)}</span>
                     </div>
                 </div>
-            `).join('');
+            `).join('') || "<p>Coming soon!</p>";
         }
 
-        function resetForm() {
-            document.getElementById('editId').value = "";
-            document.getElementById('admNome').value = "";
-            document.getElementById('admPreco').value = "";
-            document.getElementById('admDesc').value = "";
-            document.getElementById('mini-preview').style.display = 'none';
-            document.getElementById('btnSalvar').innerText = "GUARDAR PRODUTO";
-            imagemFinal = null;
-        }
-
-        // --- LOJA E CARRINHO ---
-        function abrirCategoria(cat) {
-            document.getElementById('menuPrincipal').style.display = 'none';
-            document.getElementById('areaItens').style.display = 'block';
-            document.getElementById('tituloCategoria').innerText = configCats[cat].nome;
-            const filtrados = produtos.filter(p => p.categoria === cat);
-            document.getElementById('listaItens').innerHTML = filtrados.map(p => `
-                <div class="item-clicavel" onclick="abrirDetalhe(${p.id})">
-                    <img src="${p.img}" class="item-img">
-                    <div class="item-info"><h3>${p.nome}</h3><span>€${p.preco.toFixed(2)}</span></div>
-                </div>`).join('') || "<p>Nenhum item nesta categoria.</p>";
-        }
-
-        function voltarAoMenu() { document.getElementById('menuPrincipal').style.display = 'block'; document.getElementById('areaItens').style.display = 'none'; }
-
-        function abrirDetalhe(id) {
-            const p = produtos.find(item => item.id == id);
-            produtoAtual = p;
-            document.getElementById('modalNome').innerText = p.nome;
+        function openDetail(id) {
+            const p = products.find(item => item.id == id);
+            selectedProduct = p;
+            document.getElementById('modalName').innerText = p.name;
             document.getElementById('modalDesc').innerText = p.desc;
-            document.getElementById('modalPreco').innerText = `€${p.preco.toFixed(2)}`;
-            document.getElementById('modalIcone').innerHTML = `<img src="${p.img}" style="width:100%; height:180px; object-fit:cover; border-radius:10px;">`;
-            document.getElementById('modalDetalhe').style.display = 'flex';
+            document.getElementById('modalPrice').innerText = `€${p.price.toFixed(2)}`;
+            document.getElementById('modalIcon').innerHTML = `<img src="${p.img}" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:15px;">`;
+            document.getElementById('modalDetail').style.display = 'flex';
         }
 
-        function fecharModal() { document.getElementById('modalDetalhe').style.display = 'none'; }
-        function toggleCart() { 
-            document.getElementById('sidebarCart').classList.toggle('active'); 
-            if(document.getElementById('sidebarCart').classList.contains('active')) renderPaypal(); 
-        }
-        function adicionarAoCarrinho() { carrinho.push(produtoAtual); atualizarCarrinhoUI(); fecharModal(); toggleCart(); }
+        function closeModal() { document.getElementById('modalDetail').style.display = 'none'; }
+        function backToMenu() { document.getElementById('mainMenu').style.display = 'block'; document.getElementById('itemsArea').style.display = 'none'; }
+        function toggleCart() { document.getElementById('sidebarCart').classList.toggle('active'); renderPaypal(); }
 
-        function atualizarCarrinhoUI() {
+        function addToCart() {
+            cart.push(selectedProduct);
+            updateCartUI();
+            closeModal();
+            toggleCart();
+        }
+
+        function updateCartUI() {
             let total = 0;
-            document.getElementById('cart-count').innerText = carrinho.length;
-            document.getElementById('cart-items').innerHTML = carrinho.map((i, idx) => {
-                total += i.preco;
-                return `<div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
-                    <span>${i.nome}</span>
+            document.getElementById('cart-count').innerText = cart.length;
+            document.getElementById('cart-items').innerHTML = cart.map((i, idx) => {
+                total += i.price;
+                return `<div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center; background: #000; padding: 10px; border-radius: 5px;">
+                    <span style="font-size: 0.9rem;">${i.name}</span>
                     <div>
-                        <span style="color:#ff0844; margin-right:10px;">€${i.preco.toFixed(2)}</span>
-                        <button onclick="removerDoCarrinho(${idx})" style="background:none; border:none; color:grey; cursor:pointer;">&times;</button>
+                        <span style="color:#ff0844; font-weight: bold;">€${i.price.toFixed(2)}</span>
+                        <button onclick="removeFromCart(${idx})" style="background:none; border:none; color:#666; cursor:pointer; margin-left:10px; font-size: 18px;">&times;</button>
                     </div>
                 </div>`;
             }).join('');
             document.getElementById('cart-total').innerText = `€${total.toFixed(2)}`;
         }
 
-        function removerDoCarrinho(index) {
-            carrinho.splice(index, 1);
-            atualizarCarrinhoUI();
-            if(carrinho.length === 0) document.getElementById('paypal-button-container').innerHTML = '';
-            else renderPaypal();
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+            renderPaypal();
         }
 
         function renderPaypal() {
-            document.getElementById('paypal-button-container').innerHTML = '';
-            if(carrinho.length === 0) return;
+            const container = document.getElementById('paypal-button-container');
+            container.innerHTML = '';
+            if(cart.length === 0) return;
+
             paypal.Buttons({
                 createOrder: (data, actions) => {
-                    if(!document.getElementById('discordUser').value) return alert("Insira o seu Discord para entrega!");
-                    return actions.order.create({ purchase_units: [{ amount: { value: document.getElementById('cart-total').innerText.replace('€','') } }] });
+                    const discord = document.getElementById('discordUser').value;
+                    if(!discord) {
+                        alert("Please enter your Discord @Username to receive your order!");
+                        return;
+                    }
+                    return actions.order.create({
+                        purchase_units: [{ amount: { value: document.getElementById('cart-total').innerText.replace('€','') } }]
+                    });
                 },
-                onApprove: (data, actions) => actions.order.capture().then(() => { 
-                    alert("Compra efetuada com sucesso!"); 
-                    carrinho = []; atualizarCarrinhoUI(); toggleCart(); 
-                })
+                onApprove: (data, actions) => {
+                    return actions.order.capture().then(() => {
+                        alert("Payment successful! We will contact you on Discord shortly.");
+                        cart = [];
+                        updateCartUI();
+                        toggleCart();
+                    });
+                }
             }).render('#paypal-button-container');
         }
-
-        // Iniciar categorias ao carregar
-        window.onload = renderizarCategorias;
     </script>
 </body>
 </html>
